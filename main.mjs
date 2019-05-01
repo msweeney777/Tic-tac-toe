@@ -1,5 +1,6 @@
 import fs from 'fs';
 
+let player = "";
 //Reads and writes state to local disk
 fs.readFile('main.mjs', (err, data) => {
   if (err) throw err;
@@ -90,14 +91,13 @@ function setMove() {
 // Imports the current game state from the datastore.json file and prints it
 // out.
 function printBoard() {
-  let player = ""
   fs.readFile('datastore.json', (err, data) => {
     if (err) throw err;
     gameBoard = JSON.parse(data);
     if(gameBoard[3].count % 2 == 0)  {
-      player = "Player one's turn." 
+      player = "Player one" 
     } else {
-      player = "Player two's turn."
+      player = "Player two"
     }
     console.log("\n"+ player +"\n             ");
     console.log("       1   2   3   ")
@@ -109,4 +109,17 @@ function printBoard() {
     console.log("                        ")
     console.log("                       ")
   })
+  checkWinner();
+}
+
+function checkWinner() {
+
+  if ((gameBoard[0][0] + gameBoard[1][1] + gameBoard[2][2] === "XXX") || (gameBoard[0][0] + gameBoard[1][1] + gameBoard[2][2] === "OOO") || ((gameBoard[0][2] + gameBoard[1][1] + gameBoard[2][0] === "XXX") || (gameBoard[0][2] + gameBoard[1][1] + gameBoard[2][0] === "OOO"))) {
+    console.log(`${player} + "wins!"`)
+  }
+}
+
+
+function validMove() {
+
 }
