@@ -10,7 +10,8 @@ const y = (process.argv.slice(4,5)).pop();
 let gameBoard = [
   [" ", " ", " "],
   [" ", " ", " "],
-  [" ", " ", " "]
+  [" ", " ", " "],
+  {count: 0}
 ];
 
 // Turns the parsed inputs x and y into integers which can then be fed into
@@ -45,6 +46,7 @@ if(command == "reset"){
 //Resets the game board
 function setDefault() { 
   let data = JSON.stringify(gameBoard, null, 2);
+  let count = {count: 0}
 
   fs.writeFile('datastore.json', data, (err) => {
     if (err) throw err;
@@ -63,7 +65,12 @@ function setMove() {
   fs.readFile('datastore.json', (err, data) => {
     if (err) throw err;
   gameBoard = JSON.parse(data);
-  gameBoard[move[1] - 1] [move[0]-1] = "X"
+  if(gameBoard[3].count % 2 == 0) {
+    gameBoard[move[1] - 1] [move[0]-1] = "X"
+  } else {
+    gameBoard[move[1] - 1] [move[0]-1] = "O"
+  }
+  gameBoard[3].count++;
   data = JSON.stringify(gameBoard, null, 2)
   fs.writeFile('datastore.json', data, (err) => {
     if (err) throw err;
@@ -75,11 +82,17 @@ function setMove() {
 // Output functions:
 
 function printBoard() {
+  let player = ""
   fs.readFile('datastore.json', (err, data) => {
     if (err) throw err;
     gameBoard = JSON.parse(data);
-    
-    console.log("                  ");
+    //console.log(gameBoard[3].count)
+    if(gameBoard[3].count % 2 == 0)  {
+      player = "Player one's turn." 
+    } else {
+      player = "Player two's turn."
+    }
+    console.log("\n"+ player +"\n             ");
     console.log("       1   2   3   ")
     console.log("    ~~~~~~~~~~~~~ ")
     console.log("  1 | " + gameBoard[0][0] + " | " + gameBoard[0][1] + " | " + gameBoard[0][2] + " |")
@@ -87,6 +100,6 @@ function printBoard() {
     console.log("  3 | " + gameBoard[2][0] + " | " + gameBoard[2][1] + " | " + gameBoard[2][2] + " |")
     console.log("    ~~~~~~~~~~~~~ ")
     console.log("                        ")
-    console.log("                        ")
+    console.log("                       ")
   })
 }
