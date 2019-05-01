@@ -22,7 +22,8 @@ let gameBoard = [
   [" ", " ", " "],
   [" ", " ", " "],
   [" ", " ", " "],
-  {count: 0}
+  {count: 0},
+  {win: false}
 ];
 
 // Turns the parsed inputs x and y into integers which can then be fed into
@@ -49,11 +50,9 @@ if(command == "reset"){
 //Resets the game board
 function setDefault() { 
   let data = JSON.stringify(gameBoard, null, 2);
-  let count = {count: 0}
 
   fs.writeFile('datastore.json', data, (err) => {
     if (err) throw err;
-    console.log('Board reset');
   })
   printBoard();
 }
@@ -91,15 +90,11 @@ function setMove() {
 // Imports the current game state from the datastore.json file and prints it
 // out.
 function printBoard() {
-  fs.readFile('datastore.json', (err, data) => {
-    if (err) throw err;
-    gameBoard = JSON.parse(data);
-    if(gameBoard[3].count % 2 == 0)  {
-      player = "Player one" 
-    } else {
-      player = "Player two"
-    }
-    console.log("\n"+ player +"\n             ");
+  checkWinner();
+  if(!gameBoard[4].win){
+    currentPlayer();
+  }
+    console.log("           \n"+ player +"\n             ");
     console.log("       1   2   3   ")
     console.log("    ~~~~~~~~~~~~~ ")
     console.log("  1 | " + gameBoard[0][0] + " | " + gameBoard[0][1] + " | " + gameBoard[0][2] + " |")
@@ -108,18 +103,32 @@ function printBoard() {
     console.log("    ~~~~~~~~~~~~~ ")
     console.log("                        ")
     console.log("                       ")
-  })
-  checkWinner();
 }
 
 function checkWinner() {
-
   if ((gameBoard[0][0] + gameBoard[1][1] + gameBoard[2][2] === "XXX") || (gameBoard[0][0] + gameBoard[1][1] + gameBoard[2][2] === "OOO") || ((gameBoard[0][2] + gameBoard[1][1] + gameBoard[2][0] === "XXX") || (gameBoard[0][2] + gameBoard[1][1] + gameBoard[2][0] === "OOO"))) {
-    console.log(`${player} + "wins!"`)
+  gameBoard[4].win = true;
+  printWinner();
   }
 }
 
 
 function validMove() {
 
+}
+
+function printWinner () {
+    if(gameBoard[3].count % 2 == 0) {
+      player = 'Player two wins!';
+    } else {
+      player = 'Player one wins!';
+    }
+}
+
+function currentPlayer () {
+    if(gameBoard[3].count % 2 == 0)  {
+      player = "Player one's turn" 
+    } else {
+      player = "Player two's turn"
+    }
 }
