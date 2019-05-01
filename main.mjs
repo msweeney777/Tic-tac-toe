@@ -1,12 +1,22 @@
 import fs from 'fs';
 
+//Reads and writes state to local disk
+fs.readFile('main.mjs', (err, data) => {
+  if (err) throw err;
+  fs.writeFile('/tmp/test' , data, (err) => {
+    if(err) throw err;
+  })
+})
+
 //Parses arguments from the command line:
 const command = (process.argv.slice(2,3)).pop();
 const x = (process.argv.slice(3,4)).pop();
 const y = (process.argv.slice(4,5)).pop();
 
 // The memory storage framework that is fed into the datastore.json file to
-// properly store the given moves
+// properly store the given moves; includees an object that takes count of the
+// number of turns that have transpired since the start of the game to
+// effectively arbitrate whether it is the first or second player's turn
 let gameBoard = [
   [" ", " ", " "],
   [" ", " ", " "],
@@ -21,14 +31,6 @@ let move = [];
 move.push(x, y);
 move[0] = parseInt(move[0], 10);
 move[1] = parseInt(move[1], 10);
-
-//Read and write state to disk
-fs.readFile('main.mjs', (err, data) => {
-  if (err) throw err;
-  fs.writeFile('/tmp/test' , data, (err) => {
-    if(err) throw err;
-  })
-})
 
 //Connects the parsed command with its related function
 if(command == "reset"){
@@ -55,12 +57,16 @@ function setDefault() {
   printBoard();
 }
 
+// Provides a menu supplying the commands and what they do
 function help() {
-  console.log(`Commands: \n 'reset' - resets gameboard\n 'show' - prints gameboard`)
+  console.log(`Commands: \n 'reset' - resets gameboard\n 'show' - prints gameboard\n 'input' + [x-coordinate] + [y-coordinate]\n 'help' - shows a menu of commands and what they do`)
 }
 
 //Input functions:
 
+//Takes the parsed coordinates and, based on whether or not the counter object
+//in the json file is even or odd will assign an 'X' or an 'O' to given
+//coordinate if it is not already occupied.
 function setMove() {
   fs.readFile('datastore.json', (err, data) => {
     if (err) throw err;
@@ -81,12 +87,13 @@ function setMove() {
 
 // Output functions:
 
+// Imports the current game state from the datastore.json file and prints it
+// out.
 function printBoard() {
   let player = ""
   fs.readFile('datastore.json', (err, data) => {
     if (err) throw err;
     gameBoard = JSON.parse(data);
-    //console.log(gameBoard[3].count)
     if(gameBoard[3].count % 2 == 0)  {
       player = "Player one's turn." 
     } else {
