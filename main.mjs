@@ -36,6 +36,8 @@ if(command == "reset"){
   help();
 } else if (command == "input") {
   setMove();
+} else if (command == "show") {
+  printBoard();
 }
 
 //Miscellaneous functions:
@@ -46,15 +48,16 @@ function setDefault() {
 
   fs.writeFile('datastore.json', data, (err) => {
     if (err) throw err;
-    console.log('Default reset');
+    console.log('Board reset');
   })
+  printBoard();
 }
 
 function help() {
-  console.log(`Commands: \n 'reset' - resets gameboard`)
+  console.log(`Commands: \n 'reset' - resets gameboard\n 'show' - prints gameboard`)
 }
 
-//Input functions;
+//Input functions:
 
 function setMove() {
   fs.readFile('datastore.json', (err, data) => {
@@ -65,5 +68,25 @@ function setMove() {
   fs.writeFile('datastore.json', data, (err) => {
     if (err) throw err;
     });
+  printBoard();
   });
+}
+
+// Output functions:
+
+function printBoard() {
+  fs.readFile('datastore.json', (err, data) => {
+    if (err) throw err;
+    gameBoard = JSON.parse(data);
+    
+    console.log("                  ");
+    console.log("       1   2   3   ")
+    console.log("    ~~~~~~~~~~~~~ ")
+    console.log("  1 | " + gameBoard[0][0] + " | " + gameBoard[0][1] + " | " + gameBoard[0][2] + " |")
+    console.log("  2 | " + gameBoard[1][0] + " | " + gameBoard[1][1] + " | " + gameBoard[1][2] + " |")
+    console.log("  3 | " + gameBoard[2][0] + " | " + gameBoard[2][1] + " | " + gameBoard[2][2] + " |")
+    console.log("    ~~~~~~~~~~~~~ ")
+    console.log("                        ")
+    console.log("                        ")
+  })
 }
