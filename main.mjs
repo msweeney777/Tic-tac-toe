@@ -51,10 +51,8 @@ if(command == "reset"){
 function setDefault() { 
   let data = JSON.stringify(gameBoard, null, 2);
 
-  fs.writeFile('datastore.json', data, (err) => {
-    if (err) throw err;
-  })
-  printBoard();
+  fs.writeFileSync('datastore.json', data);
+  //printBoard();
 }
 
 // Provides a menu supplying the commands and what they do
@@ -68,8 +66,13 @@ function help() {
 //in the json file is even or odd will assign an 'X' or an 'O' to given
 //coordinate if it is not already occupied.
 function setMove() {
-  fs.readFile('datastore.json', (err, data) => {
-    if (err) throw err;
+let data;
+  if(fs.existsSync('datastore.json')){
+    data = fs.readFileSync('datastore.json');
+  } else {
+    setDefault();
+    data = fs.readFileSync('datastore.json');
+  }
   gameBoard = JSON.parse(data);
   if(gameBoard[3].count % 2 == 0) {
     gameBoard[move[1] - 1] [move[0]-1] = "X"
@@ -78,11 +81,8 @@ function setMove() {
   }
   gameBoard[3].count++;
   data = JSON.stringify(gameBoard, null, 2)
-  fs.writeFile('datastore.json', data, (err) => {
-    if (err) throw err;
-    });
+  fs.writeFileSync('datastore.json', data);
   printBoard();
-  });
 }
 
 // Output functions:
@@ -107,6 +107,9 @@ function printBoard() {
 
 function checkWinner() {
   if ((gameBoard[0][0] + gameBoard[1][1] + gameBoard[2][2] === "XXX") || (gameBoard[0][0] + gameBoard[1][1] + gameBoard[2][2] === "OOO") || ((gameBoard[0][2] + gameBoard[1][1] + gameBoard[2][0] === "XXX") || (gameBoard[0][2] + gameBoard[1][1] + gameBoard[2][0] === "OOO"))) {
+  gameBoard[4].win = true;
+  printWinner();
+  } else if ((gameBoard[0][0] + gameBoard[0][1] + gameBoard[0][2] === "XXX") || (gameBoard[0][0] + gameBoard[0][1] + gameBoard[0][2] === "OOO") || (gameBoard[1][0] + gameBoard[1][1] + gameBoard[1][2] === "XXX") || (gameBoard[1][0] + gameBoard[1][1] + gameBoard[1][2] === "OOO") || (gameBoard[0][2] + gameBoard[1][2] + gameBoard[2][2] === "XXX") || (gameBoard[0][2] + gameBoard[1][2] + gameBoard[2][2] === "OOO")) {
   gameBoard[4].win = true;
   printWinner();
   }
