@@ -23,7 +23,8 @@ let gameBoard = [
   [" ", " ", " "],
   [" ", " ", " "],
   {count: 0},
-  {win: false}
+  {win: false},
+  {tie: false}
 ];
 
 // Turns the parsed inputs x and y into integers which can then be fed into
@@ -51,10 +52,12 @@ if(command == "reset"){
 function setDefault() { 
   let data = JSON.stringify(gameBoard, null, 2);
 
+  if(fs.existsSync('datastore.json')){
+    printBoard();
+  }
   fs.writeFileSync('datastore.json', data);
-  //printBoard();
-}
 
+}
 // Provides a menu supplying the commands and what they do
 function help() {
   console.log(`Commands: \n 'reset' - resets gameboard\n 'show' - prints gameboard\n 'input' + [x-coordinate] + [y-coordinate]\n 'help' - shows a menu of commands and what they do`)
@@ -91,7 +94,7 @@ let data;
 // out.
 function printBoard() {
   checkWinner();
-  if(!gameBoard[4].win){
+  if(!gameBoard[4].win  && gameBoard[5].tie == false){
     currentPlayer();
   }
     console.log("           \n"+ player +"\n             ");
@@ -107,11 +110,17 @@ function printBoard() {
 
 function checkWinner() {
   if ((gameBoard[0][0] + gameBoard[1][1] + gameBoard[2][2] === "XXX") || (gameBoard[0][0] + gameBoard[1][1] + gameBoard[2][2] === "OOO") || ((gameBoard[0][2] + gameBoard[1][1] + gameBoard[2][0] === "XXX") || (gameBoard[0][2] + gameBoard[1][1] + gameBoard[2][0] === "OOO"))) {
-  gameBoard[4].win = true;
-  printWinner();
-  } else if ((gameBoard[0][0] + gameBoard[0][1] + gameBoard[0][2] === "XXX") || (gameBoard[0][0] + gameBoard[0][1] + gameBoard[0][2] === "OOO") || (gameBoard[1][0] + gameBoard[1][1] + gameBoard[1][2] === "XXX") || (gameBoard[1][0] + gameBoard[1][1] + gameBoard[1][2] === "OOO") || (gameBoard[0][2] + gameBoard[1][2] + gameBoard[2][2] === "XXX") || (gameBoard[0][2] + gameBoard[1][2] + gameBoard[2][2] === "OOO")) {
-  gameBoard[4].win = true;
-  printWinner();
+    gameBoard[4].win = true;
+    printWinner();
+  } else if ((gameBoard[0][0] + gameBoard[0][1] + gameBoard[0][2] === "XXX") || (gameBoard[0][0] + gameBoard[0][1] + gameBoard[0][2] === "OOO") || (gameBoard[1][0] + gameBoard[1][1] + gameBoard[1][2] === "XXX") || (gameBoard[1][0] + gameBoard[1][1] + gameBoard[1][2] === "OOO") || (gameBoard[2][0] + gameBoard[2][1] + gameBoard[2][2] === "XXX") || (gameBoard[2][0] + gameBoard[2][1] + gameBoard[2][2] === "OOO")) {
+    gameBoard[4].win = true;
+    printWinner();
+  } else if ((gameBoard[0][0] + gameBoard[1][0] + gameBoard[2][0] === "XXX") || (gameBoard[0][0] + gameBoard[1][0] + gameBoard[2][0] === "OOO") || (gameBoard[0][1] + gameBoard[1][1] + gameBoard[2][1] === "XXX") || (gameBoard[0][1] + gameBoard[1][1] + gameBoard[2][1] === "OOO") || (gameBoard[0][2] + gameBoard[1][2] + gameBoard[2][2] === "XXX") || (gameBoard[0][2] + gameBoard[1][2] + gameBoard[2][2] === "OOO")) {
+    gameBoard[4].win = true;
+    printWinner();
+  } else if(gameBoard[3].count == 9) {
+    gameBoard[5].tie = true;
+    printWinner();
   }
 }
 
@@ -121,7 +130,9 @@ function validMove() {
 }
 
 function printWinner () {
-    if(gameBoard[3].count % 2 == 0) {
+    if(gameBoard[5].tie) {
+      player = 'Tie game!';
+    } else if(gameBoard[3].count % 2 == 0) {
       player = 'Player two wins!';
     } else {
       player = 'Player one wins!';
@@ -130,8 +141,8 @@ function printWinner () {
 
 function currentPlayer () {
     if(gameBoard[3].count % 2 == 0)  {
-      player = "Player one's turn" 
+      player = "Player one's turn." 
     } else {
-      player = "Player two's turn"
+      player = "Player two's turn."
     }
 }
