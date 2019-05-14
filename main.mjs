@@ -1,5 +1,7 @@
 import fs from 'fs';
 
+//Global variable utilized in the printWinner and printBoard functions to
+//imporve user experience
 let player = "";
 //Reads and writes state to local disk
 fs.readFile('main.mjs', (err, data) => {
@@ -10,9 +12,16 @@ fs.readFile('main.mjs', (err, data) => {
 })
 
 //Parses arguments from the command line:
+let move = [];
 const command = (process.argv.slice(2,3)).pop();
-const x = (process.argv.slice(3,4)).pop();
-const y = (process.argv.slice(4,5)).pop();
+move[0] = (process.argv.slice(3,4)).pop();
+move[1] = (process.argv.slice(4,5)).pop();
+move[0] = parseInt(move[0], 10);
+move[1] = parseInt(move[1], 10);
+
+// Turn parsed string coordinates into integers
+const x = parseInt(move[0], 10);
+const y = parseInt(move[1], 10);
 
 // The memory storage framework that is fed into the datastore.json file to
 // properly store the given moves; includees an object that takes count of the
@@ -26,14 +35,6 @@ let gameBoard = [
   {win: false},
   {tie: false}
 ];
-
-// Turns the parsed inputs x and y into integers which can then be fed into
-// the setMove() function where they will be placed on the board.
-let currentMove = [];
-let move = [];
-move.push(x, y);
-move[0] = parseInt(move[0], 10);
-move[1] = parseInt(move[1], 10);
 
 //Connects the parsed command with its related function
 if(command == "reset"){
@@ -53,6 +54,7 @@ function setDefault() {
   let data = JSON.stringify(gameBoard, null, 2);
 
   if(fs.existsSync('datastore.json')){
+    fs.writeFileSync('datastore.json', data);
     printBoard();
   }
   fs.writeFileSync('datastore.json', data);
@@ -70,22 +72,16 @@ function help() {
 //coordinate if it is not already occupied.
 function setMove() {
 let data;
+  validMove();
   if(fs.existsSync('datastore.json')){
     data = fs.readFileSync('datastore.json');
   } else {
     setDefault();
     data = fs.readFileSync('datastore.json');
   }
-  gameBoard = JSON.parse(data);
-  if(gameBoard[3].count % 2 == 0) {
-    gameBoard[move[1] - 1] [move[0]-1] = "X"
-  } else {
-    gameBoard[move[1] - 1] [move[0]-1] = "O"
-  }
-  gameBoard[3].count++;
+
   data = JSON.stringify(gameBoard, null, 2)
   fs.writeFileSync('datastore.json', data);
-  printBoard();
 }
 
 // Output functions:
@@ -93,6 +89,8 @@ let data;
 // Imports the current game state from the datastore.json file and prints it
 // out.
 function printBoard() {
+  let data = fs.readFileSync('datastore.json');
+  gameBoard = JSON.parse(data);
   checkWinner();
   if(!gameBoard[4].win  && gameBoard[5].tie == false){
     currentPlayer();
@@ -124,9 +122,28 @@ function checkWinner() {
   }
 }
 
-
 function validMove() {
-
+  let data = fs.readFileSync('datastore.json');
+  gameBoard = JSON.parse(data);
+  if(!isNaN(move[0]) && !isNaN(move[1])){
+    if( ((x < 1) || (x > 3)) || (y < 1) || (y > 3)) {
+      console.log("\nInvalid input: These coordinates are outside of the playable area.\n") 
+    } else {
+      if(gameBoard[3].count % 2 == 0) {
+        gameBoard[move[1] - 1] [move[0]-1] = "X"
+      } else {
+        gameBoard[move[1] - 1] [move[0]-1] = "O"
+      }
+      gameBoard[3].count++;
+      data = JSON.stringify(gameBoard, null, 2)
+      fs.writeFileSync('datastore.json', data);
+      printBoard();
+    }
+  } else if(isNaN(move[0]) || isNaN(move[1])) {
+      console.log("\nInvalid input: Coordinates must be two integers seperated by a space.\n");
+  } else if(isNaN(move[1])) {
+    console.log("\nInvalid input: Second coordinate must be an integer. Please try again.\n")
+  }
 }
 
 function printWinner () {
