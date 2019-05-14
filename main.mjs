@@ -45,6 +45,8 @@ if(command == "reset"){
   setMove();
 } else if (command == "show") {
   printBoard();
+} else {
+  console.log("\nInvalid command: See help for list of commands\n");
 }
 
 //Miscellaneous functions:
@@ -62,7 +64,7 @@ function setDefault() {
 }
 // Provides a menu supplying the commands and what they do
 function help() {
-  console.log(`Commands: \n 'reset' - resets gameboard\n 'show' - prints gameboard\n 'input' + [x-coordinate] + [y-coordinate]\n 'help' - shows a menu of commands and what they do`)
+  console.log(`Commands: \n reset - resets gameboard\n show - prints gameboard\n input - Works in conjunction with two additional integer arguments as coordinates on the tic-tac-toe board\n help - shows a menu of commands and what they do`)
 }
 
 //Input functions:
@@ -141,18 +143,16 @@ function validMove() {
     }
   } else if(isNaN(move[0]) || isNaN(move[1])) {
       console.log("\nInvalid input: Coordinates must be two integers seperated by a space.\n");
-  } else if(isNaN(move[1])) {
-    console.log("\nInvalid input: Second coordinate must be an integer. Please try again.\n")
-  }
+  } 
 }
 
 function printWinner () {
     if(gameBoard[5].tie) {
-      player = 'Tie game!';
+      player = "Tie game! \n\nUse the 'reset' command to start a new game.";
     } else if(gameBoard[3].count % 2 == 0) {
-      player = 'Player two wins!';
+      player = "Player two wins! \n\nUse the 'reset' command to start a new game.";
     } else {
-      player = 'Player one wins!';
+      player = "Player one wins! \n\nUse the 'reset' command to start a new game.";;
     }
 }
 
