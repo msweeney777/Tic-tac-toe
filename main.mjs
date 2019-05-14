@@ -108,6 +108,8 @@ function printBoard() {
     console.log("                       ")
 }
 
+//Determines if the current player has won the game based on diagonal, row or
+//column win
 function checkWinner() {
   if ((gameBoard[0][0] + gameBoard[1][1] + gameBoard[2][2] === "XXX") || (gameBoard[0][0] + gameBoard[1][1] + gameBoard[2][2] === "OOO") || ((gameBoard[0][2] + gameBoard[1][1] + gameBoard[2][0] === "XXX") || (gameBoard[0][2] + gameBoard[1][1] + gameBoard[2][0] === "OOO"))) {
     gameBoard[4].win = true;
@@ -124,13 +126,15 @@ function checkWinner() {
   }
 }
 
+//Determines if the input coordinates are appropriate; prints an error message
+//if not.
 function validMove() {
   let data = fs.readFileSync('datastore.json');
   gameBoard = JSON.parse(data);
   if(!isNaN(move[0]) && !isNaN(move[1])){
     if( ((x < 1) || (x > 3)) || (y < 1) || (y > 3)) {
       console.log("\nInvalid input: These coordinates are outside of the playable area.\n") 
-    } else {
+    } else if (gameBoard[move[1] - 1] [move[0]-1] !== "X" && gameBoard[move[1] - 1] [move[0]-1] !== "O"){
       if(gameBoard[3].count % 2 == 0) {
         gameBoard[move[1] - 1] [move[0]-1] = "X"
       } else {
@@ -140,12 +144,15 @@ function validMove() {
       data = JSON.stringify(gameBoard, null, 2)
       fs.writeFileSync('datastore.json', data);
       printBoard();
+    } else {
+      console.log("\nInvalid input: Coordinate already claimed.\n");
     }
   } else if(isNaN(move[0]) || isNaN(move[1])) {
       console.log("\nInvalid input: Coordinates must be two integers seperated by a space.\n");
   } 
 }
 
+//Prints the out the winner. Is called in the checkWinner function.
 function printWinner () {
     if(gameBoard[5].tie) {
       player = "Tie game! \n\nUse the 'reset' command to start a new game.";
@@ -156,6 +163,7 @@ function printWinner () {
     }
 }
 
+//Prints out the current player's turn. Is called in the printBoard function.
 function currentPlayer () {
     if(gameBoard[3].count % 2 == 0)  {
       player = "Player one's turn." 
