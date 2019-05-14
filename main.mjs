@@ -132,9 +132,9 @@ function validMove() {
   let data = fs.readFileSync('datastore.json');
   gameBoard = JSON.parse(data);
   if(!isNaN(move[0]) && !isNaN(move[1])){
-    if( ((x < 1) || (x > 3)) || (y < 1) || (y > 3)) {
+    if( ((x < 1) || (x > 3)) || ((y < 1) || (y > 3))) {
       console.log("\nInvalid input: These coordinates are outside of the playable area.\n") 
-    } else if (gameBoard[move[1] - 1] [move[0]-1] !== "X" && gameBoard[move[1] - 1] [move[0]-1] !== "O"){
+    } else if (gameBoard[move[1] - 1] [move[0]-1] !== "X" && gameBoard[move[1] - 1] [move[0]-1] !== "O" && !gameBoard[4].win){
       if(gameBoard[3].count % 2 == 0) {
         gameBoard[move[1] - 1] [move[0]-1] = "X"
       } else {
@@ -144,12 +144,15 @@ function validMove() {
       data = JSON.stringify(gameBoard, null, 2)
       fs.writeFileSync('datastore.json', data);
       printBoard();
-    } else {
+    } else if (!gameBoard[4].win){
       console.log("\nInvalid input: Coordinate already claimed.\n");
-    }
+    } else {
+      console.log("\nType reset to start a new game.\n")
+  }
+
   } else if(isNaN(move[0]) || isNaN(move[1])) {
       console.log("\nInvalid input: Coordinates must be two integers seperated by a space.\n");
-  } 
+  }
 }
 
 //Prints the out the winner. Is called in the checkWinner function.
