@@ -16,15 +16,13 @@ let move = [];
 const command = (process.argv.slice(2,3)).pop();
 move[0] = (process.argv.slice(3,4)).pop();
 move[1] = (process.argv.slice(4,5)).pop();
-move[0] = parseInt(move[0], 10);
-move[1] = parseInt(move[1], 10);
 
 // Turn parsed string coordinates into integers
 const x = parseInt(move[0], 10);
 const y = parseInt(move[1], 10);
 
 // The memory storage framework that is fed into the datastore.json file to
-// properly store the given moves; includees an object that takes count of the
+// properly store the given moves; includes an object that takes count of the
 // number of turns that have transpired since the start of the game to
 // effectively arbitrate whether it is the first or second player's turn
 let gameBoard = [
@@ -81,7 +79,6 @@ let data;
     setDefault();
     data = fs.readFileSync('datastore.json');
   }
-
   data = JSON.stringify(gameBoard, null, 2)
   fs.writeFileSync('datastore.json', data);
 }
@@ -131,14 +128,14 @@ function checkWinner() {
 function validMove() {
   let data = fs.readFileSync('datastore.json');
   gameBoard = JSON.parse(data);
-  if(!isNaN(move[0]) && !isNaN(move[1])){
+  if(!isNaN(x) && !isNaN(y)){
     if( ((x < 1) || (x > 3)) || ((y < 1) || (y > 3))) {
       console.log("\nInvalid input: These coordinates are outside of the playable area.\n") 
-    } else if (gameBoard[move[1] - 1] [move[0]-1] !== "X" && gameBoard[move[1] - 1] [move[0]-1] !== "O" && !gameBoard[4].win){
+    } else if (gameBoard[y - 1] [x - 1] !== "X" && gameBoard[y - 1] [x - 1] !== "O" && !gameBoard[4].win){
       if(gameBoard[3].count % 2 == 0) {
-        gameBoard[move[1] - 1] [move[0]-1] = "X"
+        gameBoard[y - 1] [x - 1] = "X"
       } else {
-        gameBoard[move[1] - 1] [move[0]-1] = "O"
+        gameBoard[y - 1] [x - 1] = "O"
       }
       gameBoard[3].count++;
       data = JSON.stringify(gameBoard, null, 2)
@@ -150,7 +147,7 @@ function validMove() {
       console.log("\nType reset to start a new game.\n")
   }
 
-  } else if(isNaN(move[0]) || isNaN(move[1])) {
+  } else if(isNaN(x) || isNaN(y)) {
       console.log("\nInvalid input: Coordinates must be two integers seperated by a space.\n");
   }
 }
