@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 //Global variable utilized in the printWinner and printBoard functions to
-//improve user experience
+//imporve user experience
 let player = "";
 
 //Reads and writes state to local disk
@@ -32,13 +32,8 @@ let gameBoard = [
   [" ", " ", " "],
   {count: 0},
   {win: false},
-  {tie: false},
+  {tie: false}, 
 ];
-
-// Provides a storage framework for the score itself
-let scoreBoard = [
-  {win1: 0, win2: 0, tie: 0}
-]
 
 //Connects the parsed command with its related function
 if(command == "reset"){
@@ -49,8 +44,6 @@ if(command == "reset"){
   setMove();
 } else if (command == "show") {
   printBoard();
-} else if (command == "clear score") {
-  resetScore();
 } else {
   console.log("\nInvalid command: See help for list of commands\n");
 }
@@ -66,12 +59,11 @@ function setDefault() {
     printBoard();
   }
   fs.writeFileSync('datastore.json', data);
-  resetScore();
 
 }
 // Provides a menu supplying the commands and what they do
 function help() {
-  console.log(`Commands: \n reset - resets gameboard\n show - prints gameboard\n input - Works in conjunction with two additional integer arguments as coordinates on the tic-tac-toe board\n help - shows a menu of commands and what they do\n clear score - Clears the score`)
+  console.log(`Commands: \n reset - resets gameboard\n show - prints gameboard\n input - Works in conjunction with two additional integer arguments as coordinates on the tic-tac-toe board\n help - shows a menu of commands and what they do`)
 }
 
 //Input functions:
@@ -112,7 +104,6 @@ function printBoard() {
     console.log("    ~~~~~~~~~~~~~ ")
     console.log("                        ")
     console.log("                       ")
-    printScore();
 }
 
 //Determines if the current player has won the game based on diagonal, row or
@@ -166,13 +157,10 @@ function validMove() {
 function printWinner () {
     if(gameBoard[5].tie) {
       player = "Tie game! \n\nUse the 'reset' command to start a new game.";
-      gameBoard[6].tie++
     } else if(gameBoard[3].count % 2 == 0) {
       player = "Player two wins! \n\nUse the 'reset' command to start a new game.";
-      gameBoard[6].win2++
     } else {
       player = "Player one wins! \n\nUse the 'reset' command to start a new game.";;
-      gameBoard[6].win1++
     }
 }
 
@@ -183,22 +171,4 @@ function currentPlayer () {
     } else {
       player = "Player two's turn."
     }
-}
-
-function resetScore () {
-  let data = JSON.stringify(scoreBoard, null, 2);
-
-  //if(fs.existsSync('datastore.json')){
-  //  fs.writeFileSync('datastore.json', data);
-  //}
-  fs.writeFileSync('datastore.json', data);
-
-}
-
-function printScore () {
-  let data = fs.readFileSync('datastore.json');
-  scoreBoard = JSON.parse(data);
-
-  console.log(` Score:\n Player one: ${gameBoard[6].win1}  \n Player two: ${gameBoard[6].win2} \n Tie: ${gameBoard[6].tie}`);
-  fs.writeFileSync('datastore.json', data);
 }
