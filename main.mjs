@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 //Global variable utilized in the printWinner and printBoard functions to
-//imporve user experience
+//improve user experience
 let player = "";
 
 //Reads and writes state to local disk
@@ -89,7 +89,13 @@ let data;
 // Imports the current game state from the datastore.json file and prints it
 // out.
 function printBoard() {
-  let data = fs.readFileSync('datastore.json');
+  let data;
+  if(fs.existsSync('datastore.json')){
+    data = fs.readFileSync('datastore.json');
+  } else {
+    setDefault();
+    data = fs.readFileSync('datastore.json');
+  }
   gameBoard = JSON.parse(data);
   checkWinner();
   if(!gameBoard[4].win  && gameBoard[5].tie == false){
@@ -142,12 +148,11 @@ function validMove() {
       data = JSON.stringify(gameBoard, null, 2)
       fs.writeFileSync('datastore.json', data);
       printBoard();
-    } else if (!gameBoard[4].win){
+    } else if (gameBoard[4].win && gameBoard[4].tie){
       console.log("\nInvalid input: Coordinate already claimed.\n");
     } else {
       console.log("\nType reset to start a new game.\n")
-  }
-
+    }
   } else if(isNaN(x) || isNaN(y)) {
       console.log("\nInvalid input: Coordinates must be two integers seperated by a space.\n");
   }
