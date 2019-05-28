@@ -4,23 +4,11 @@ import fs from 'fs';
 //improve user experience
 let player = "";
 
-//Reads and writes state to local disk
-fs.readFile('main.mjs', (err, data) => {
-  if (err) throw err;
-  fs.writeFile('/tmp/test' , data, (err) => {
-    if(err) throw err;
-  })
-})
-
 //Parses arguments from the command line:
 let move = [];
-const command = (process.argv.slice(2,3)).pop();
-move[0] = (process.argv.slice(3,4)).pop();
-move[1] = (process.argv.slice(4,5)).pop();
-
-// Turn parsed string coordinates into integers
-const x = parseInt(move[0], 10);
-const y = parseInt(move[1], 10);
+let command = "";
+let x = 0;
+let y = 0;
 
 // The memory storage framework that is fed into the datastore.json file to
 // properly store the given moves; includes an object that takes count of the
@@ -35,18 +23,7 @@ let gameBoard = [
   {tie: false}, 
 ];
 
-//Connects the parsed command with its related function
-if(command == "reset"){
-  setDefault();
-} else if (command == "help") {
-  help();
-} else if (command == "input") {
-  setMove();
-} else if (command == "show") {
-  printBoard();
-} else {
-  console.log("\nInvalid command: See help for list of commands\n");
-}
+parseInput();
 
 //Miscellaneous functions:
 //
@@ -64,6 +41,28 @@ function setDefault() {
 // Provides a menu supplying the commands and what they do
 function help() {
   console.log(`Commands: \n reset - resets gameboard\n show - prints gameboard\n input - Works in conjunction with two additional integer arguments as coordinates on the tic-tac-toe board\n help - shows a menu of commands and what they do`)
+}
+
+function parseInput(){
+  command = (process.argv.slice(2,3)).pop();
+  move[0] = (process.argv.slice(3,4)).pop();
+  move[1] = (process.argv.slice(4,5)).pop();
+  // Turn parsed string coordinates into integers
+  x = parseInt(move[0], 10);
+  y = parseInt(move[1], 10);
+
+//Connects the parsed command with its related function
+  if(command == "reset"){
+    setDefault();
+  } else if (command == "help") {
+    help();
+  } else if (command == "input") {
+    setMove();
+  } else if (command == "show") {
+    printBoard();
+  } else {
+    console.log("\nInvalid command: See help for list of commands\n");
+  }
 }
 
 //Input functions:
@@ -133,6 +132,13 @@ function checkWinner() {
 //Determines if the input coordinates are appropriate; prints an error message
 //if not.
 function validMove() {
+  command = (process.argv.slice(2,3)).pop();
+  move[0] = (process.argv.slice(3,4)).pop();
+  move[1] = (process.argv.slice(4,5)).pop();
+  // Turn parsed string coordinates into integers
+  const x = parseInt(move[0], 10);
+  const y = parseInt(move[1], 10);
+
   let data = fs.readFileSync('datastore.json');
   gameBoard = JSON.parse(data);
   if(!isNaN(x) && !isNaN(y)){
