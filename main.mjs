@@ -51,17 +51,23 @@ function parseInput(){
   x = parseInt(move[0], 10);
   y = parseInt(move[1], 10);
 
-//Connects the parsed command with its related function
-  if(command == "reset"){
-    setDefault();
-  } else if (command == "help") {
-    help();
-  } else if (command == "input") {
-    setMove();
-  } else if (command == "show") {
-    printBoard();
-  } else {
-    console.log("\nInvalid command: See help for list of commands\n");
+  //Connects the parsed command with its related function
+  switch (command){
+    case "reset":
+      setDefault();
+      break;
+    case "help":
+      help();
+      break;
+    case "input":
+      setMove();
+      break;
+    case "show":
+      printBoard();
+      break;
+    default:
+      console.log("\nInvalid command: See help for list of commands\n");
+      break;
   }
 }
 //Input functions:
