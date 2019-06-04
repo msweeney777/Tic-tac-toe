@@ -10,6 +10,24 @@ let command = "";
 let x = 0;
 let y = 0;
 
+let state = {
+  1: { 1: 0, 2: 0, 3: 0},
+  2: { 1: 0, 2: 0, 3: 0},
+  3: { 1: 0, 2: 0, 3: 0},
+}
+
+let game =  {
+  board: {
+    state: state,
+    set: (x, y, value) => state[x][y] = value,
+    get: (x, y) => state[x][y],
+    win: 0,
+    tie: 0,
+    count: 0
+  }
+
+}
+
 parseInput();
 
 //Miscellaneous functions:
@@ -27,7 +45,16 @@ function setDefault() {
 }
 
 function sizeBoard() {
-  console.log("sizeBoard function called");
+
+  //console.log(game.board.set.x = '1') 
+  //console.log(game.board.set.y = '2')
+  //console.log(game.board.set.value = 'X')
+  //console.log(game.board.set);
+  //console.log(game.board.state[1][2] = 'X');
+  //console.log(game.board.set(x, y, 'X'))
+  console.log(game.board.get(x, y))
+  console.log(game.board.state);
+
 }
 // Provides a menu supplying the commands and what they do
 function help() {
